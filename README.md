@@ -33,8 +33,8 @@ Keep in mind that an experienceKey/eventKey combination will **only fire one tim
 
 ```javascript
 window.MothershipAnalytics.newEvent("experienceKey", "eventKey", 10); // Will report
-window.MothershipAnalytics.newEvent("experienceKey", "eventKey", 10); // Will not report
-window.MothershipAnalytics.newEvent("experienceKey", "eventKey", 10, true); // Will report
+window.MothershipAnalytics.newEvent("experienceKey", "eventKey", 10); // Will not report because it's a duplicate of the first one
+window.MothershipAnalytics.newEvent("experienceKey", "eventKey", 10, true); // Will report even though it's a duplicate
 ```
 
 ## Development and Testing
