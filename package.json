@@ -20,7 +20,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "webpack --mode development --watch",
     "serve": "webpack-dev-server --open -entry=./index.html --MOTHERSHIP_URL=http://mothership.test",
-    "build": "webpack --entry=./src/main-library.ts --output=./library-dist/mothership-analytics.lib.js --mode production  --MOTHERSHIP_URL=https://mothership.app",
+    "build": "webpack --entry=./src/main-library.ts --output=./library-dist/mothership-analytics.lib.js --mode production  --MOTHERSHIP_URL=http://mothership.test",
     "postversion": "git push && git push --tags && npm publish"
   },
   "dependencies": {

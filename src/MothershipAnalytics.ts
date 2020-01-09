@@ -15,14 +15,14 @@ interface MothershipOptions {
 }
 
 interface Event {
-  experienceKey: string;
-  eventKey: string;
+  experience_key: string;
+  event_key: string;
   points?: any;
 }
 
 export default class MothershipAnalytics {
   private defaultOptions: MothershipOptions = {
-    mothershipUrl: "https://mothership.app",
+    mothershipUrl: "http://mothership.test",
     apiKey: ""
   };
 
@@ -53,26 +53,47 @@ export default class MothershipAnalytics {
    * Checks to see if analytics is enabled and if it is
    * sends along the event to Mothership
    *
-   * @param experienceKey    Key of the experience (Retrieve from mothership.app)
-   * @param eventKey         Key of the event (Retrieve from mothership.app)
+   * @param experience_key    Key of the experience (Retrieve from mothership.app)
+   * @param event_key         Key of the event (Retrieve from mothership.app)
    * @param points           Value of the event
    */
-  newEvent(experienceKey: string, eventKey: string, points: any = 1) {
+  newEvent(
+    experienceKey: string,
+    eventKey: string,
+    points: any = 1,
+    force: boolean = false
+  ) {
     clearTimeout(this.eventQueueTimer);
     this.eventQueueTimer = setTimeout(() => {
       this.sendEvents();
     }, 2000);
 
-    this.queuedEvents.push({
-      experienceKey: experienceKey,
-      eventKey: eventKey,
-      points: points
+    if (force === true || this.isUniqueEvent(experienceKey, eventKey)) {
+      this.queuedEvents.push({
+        experience_key: experienceKey,
+        event_key: eventKey,
+        points: points
+      });
+      return {
+        experience_key: experienceKey,
+        event_key: eventKey,
+        points: points
+      };
+    }
+  }
+
+  /**
+   * Checks to see if the event is unique
+   *
+   * @param experience_key    Key of the experience
+   * @param event_key         Key of the event
+   */
+  private isUniqueEvent(experienceKey: string, eventKey: string) {
+    return !this.queuedEvents.find(event => {
+      return (
+        event.experience_key === experienceKey && event.event_key === eventKey
+      );
     });
-    return {
-      experienceKey: experienceKey,
-      eventKey: eventKey,
-      points: points
-    };
   }
 
   private sendEvents() {
