@@ -22,7 +22,7 @@ interface Event {
 
 export default class MothershipAnalytics {
   private defaultOptions: MothershipOptions = {
-    mothershipUrl: "http://mothership.test",
+    mothershipUrl: "https://mothership.app",
     apiKey: ""
   };
 
