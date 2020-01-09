@@ -1,5 +1,4 @@
 let axios = require("axios");
-let StackTrace = require("stacktrace-js");
 
 declare global {
   interface Window {
@@ -14,13 +13,16 @@ interface MothershipOptions {
   apiKey: string;
 }
 
-interface Event {
+interface AnalyticsEvent {
   experience_key: string;
   event_key: string;
   points?: any;
 }
 
 export default class MothershipAnalytics {
+
+  static instance:MothershipAnalytics;
+      
   private defaultOptions: MothershipOptions = {
     mothershipUrl: "https://mothership.app",
     apiKey: ""
@@ -28,9 +30,15 @@ export default class MothershipAnalytics {
 
   private eventQueueTimer?: ReturnType<typeof setTimeout>;
 
-  public queuedEvents: Array<Event> = [];
+  public queuedEvents: Array<AnalyticsEvent> = [];
+  public static eventLog: Array<AnalyticsEvent> = [];
 
   constructor(public options: MothershipOptions) {
+    if(MothershipAnalytics.instance){
+      return MothershipAnalytics.instance;
+    }
+
+    MothershipAnalytics.instance = this;
     this.options = Object.assign({}, this.defaultOptions, this.options);
     this.init();
   }
@@ -63,23 +71,26 @@ export default class MothershipAnalytics {
     points: any = 1,
     force: boolean = false
   ) {
-    clearTimeout(this.eventQueueTimer);
-    this.eventQueueTimer = setTimeout(() => {
-      this.sendEvents();
-    }, 2000);
 
     if (force === true || this.isUniqueEvent(experienceKey, eventKey)) {
+      clearTimeout(this.eventQueueTimer);
+      this.eventQueueTimer = setTimeout(() => {
+        this.sendEvents();
+      }, 2000);
+
+      MothershipAnalytics.eventLog.push({
+        experience_key: experienceKey,
+        event_key: eventKey,
+        points: points
+      });
       this.queuedEvents.push({
         experience_key: experienceKey,
         event_key: eventKey,
         points: points
       });
-      return {
-        experience_key: experienceKey,
-        event_key: eventKey,
-        points: points
-      };
+      return true
     }
+    return false
   }
 
   /**
@@ -89,11 +100,11 @@ export default class MothershipAnalytics {
    * @param event_key         Key of the event
    */
   private isUniqueEvent(experienceKey: string, eventKey: string) {
-    return !this.queuedEvents.find(event => {
-      return (
-        event.experience_key === experienceKey && event.event_key === eventKey
-      );
+    const foundEvent = MothershipAnalytics.eventLog.find(event => {
+      return event.experience_key === experienceKey && event.event_key === eventKey;
     });
+
+    return !foundEvent
   }
 
   private sendEvents() {

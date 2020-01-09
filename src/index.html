@@ -12,18 +12,30 @@
     </script>
     <script src="/main.js"></script>
     <script>
-      window.MothershipAnalytics.newEvent("experienceKey", "eventKey", 10);
-      window.MothershipAnalytics.newEvent("experienceKey", "eventKey", 10);
-      window.MothershipAnalytics.newEvent("experienceKey", "eventKey", 10);
-      window.MothershipAnalytics.newEvent("experienceKey", "eventKey", 10);
-      window.MothershipAnalytics.newEvent(
-        "experienceKey",
-        "eventKey",
-        10,
-        true
-      );
-      window.MothershipAnalytics.newEvent("experienceKey2", "eventKey2", 5);
-    </script>
+      // Timeouts to get us past the HMR Load
+      setTimeout(() => {
+        window.MothershipAnalytics.newEvent("experienceKey", "eventKey", 10);
+        window.MothershipAnalytics.newEvent("experienceKey", "eventKey", 10);
+        window.MothershipAnalytics.newEvent("experienceKey", "eventKey", 10);
+        window.MothershipAnalytics.newEvent("experienceKey", "eventKey", 10);
+        window.MothershipAnalytics.newEvent("experienceKey", "eventKey", 10);
+        window.MothershipAnalytics.newEvent("experienceKey", "eventKey", 10);
+        window.MothershipAnalytics.newEvent("experienceKey", "eventKey", 10);
+        window.MothershipAnalytics.newEvent("experienceKey", "eventKey", 10, true);
+        window.MothershipAnalytics.newEvent("experienceKey2", "eventKey2", 5);
+      }, 5000);
+
+      setTimeout(() => {
+        window.MothershipAnalytics.newEvent("experienceKey2", "eventKey2", 10); // Should not send
+        window.MothershipAnalytics.newEvent("experienceKey3", "eventKey3", 10, true); // Should send
+        window.MothershipAnalytics.newEvent("experienceKey4", "eventKey4", 10); // Should Send
+      }, 10000);
+
+      setTimeout(() => {
+        window.MothershipAnalytics.newEvent("experienceKey2", "eventKey2", 10); // Should not send
+        window.MothershipAnalytics.newEvent("experienceKey3", "eventKey3", 10); // Should send
+      }, 5200);
+      </script>
   </head>
 
   <body>
